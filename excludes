@@ -1,11 +1,11 @@
 # This file contains the output files that need %exclude. Full path
 # names, one per line.
 /usr/share/mime/XMLnamespaces
-/usr/share/mime/aliases conflicts
+/usr/share/mime/aliases
 /usr/share/mime/generic-icons
-/usr/share/mime/globs conflicts
-/usr/share/mime/globs2 conflicts
-/usr/share/mime/magic conflicts
+/usr/share/mime/globs
+/usr/share/mime/globs2
+/usr/share/mime/magic
 /usr/share/mime/mime.cache
 /usr/share/mime/subclasses
 /usr/share/mime/treemagic
