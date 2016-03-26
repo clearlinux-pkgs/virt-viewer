@@ -1,0 +1,6 @@
+# This file contains pkgconfig build requirements that get picked up
+# but are undesirable. One entry per line, no whitespace.
+gtk+-$GTK_API_VERSION
+gtk-vnc-$GTK_VNC_API_VERSION
+spice-client-gtk-$SPICE_GTK_API_VERSION
+govirt-1.0
