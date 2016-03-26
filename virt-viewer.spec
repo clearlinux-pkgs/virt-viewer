@@ -4,7 +4,7 @@
 #
 Name     : virt-viewer
 Version  : 3.1
-Release  : 3
+Release  : 4
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-3.1.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-3.1.tar.gz
 Summary  : MinGW Windows virt-viewer console application
@@ -65,7 +65,7 @@ locales components for the virt-viewer package.
 %setup -q -n virt-viewer-3.1
 
 %build
-%configure --disable-static --with-gtk=2.0
+%configure --disable-static --with-gtk=2.0 --disable-update-mimedb
 make V=1  %{?_smp_mflags}
 
 %check
@@ -89,16 +89,6 @@ rm -rf %{buildroot}
 
 %files data
 %defattr(-,root,root,-)
-%exclude /usr/share/mime/XMLnamespaces
-%exclude /usr/share/mime/aliases
-%exclude /usr/share/mime/generic-icons
-%exclude /usr/share/mime/globs
-%exclude /usr/share/mime/globs2
-%exclude /usr/share/mime/magic
-%exclude /usr/share/mime/mime.cache
-%exclude /usr/share/mime/subclasses
-%exclude /usr/share/mime/treemagic
-%exclude /usr/share/mime/types
 /usr/share/applications/remote-viewer.desktop
 /usr/share/icons/hicolor/16x16/apps/virt-viewer.png
 /usr/share/icons/hicolor/22x22/apps/virt-viewer.png
@@ -108,10 +98,7 @@ rm -rf %{buildroot}
 /usr/share/icons/hicolor/256x256/apps/virt-viewer.png
 /usr/share/icons/hicolor/32x32/apps/virt-viewer.png
 /usr/share/icons/hicolor/48x48/apps/virt-viewer.png
-/usr/share/mime/application/x-virt-viewer.xml
-/usr/share/mime/icons
 /usr/share/mime/packages/virt-viewer-mime.xml
-/usr/share/mime/version
 /usr/share/virt-viewer/ui/remote-viewer-connect.xml
 /usr/share/virt-viewer/ui/virt-viewer-about.xml
 /usr/share/virt-viewer/ui/virt-viewer-auth.xml
