@@ -4,7 +4,7 @@
 #
 Name     : virt-viewer
 Version  : 3.1
-Release  : 5
+Release  : 6
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-3.1.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-3.1.tar.gz
 Summary  : MinGW Windows virt-viewer console application
