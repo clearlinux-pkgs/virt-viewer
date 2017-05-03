@@ -1,1 +1,1 @@
---with-gtk=2.0 --disable-update-mimedb
+--with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
