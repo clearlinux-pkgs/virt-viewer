@@ -5,11 +5,11 @@
 # Source0 file verified with key 0xBE86EBB415104FDF (dan@berrange.com)
 #
 Name     : virt-viewer
-Version  : 5.0
-Release  : 8
-URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-5.0.tar.gz
-Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-5.0.tar.gz
-Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-5.0.tar.gz.asc
+Version  : 6.0
+Release  : 9
+URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
+Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
+Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz.asc
 Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
@@ -21,12 +21,18 @@ BuildRequires : gettext
 BuildRequires : gtk+-dev
 BuildRequires : intltool
 BuildRequires : perl(XML::Parser)
+BuildRequires : pkgconfig(gio-2.0)
 BuildRequires : pkgconfig(glib-2.0)
+BuildRequires : pkgconfig(gmodule-export-2.0)
+BuildRequires : pkgconfig(gthread-2.0)
 BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(libvirt)
 BuildRequires : pkgconfig(libvirt-glib-1.0)
 BuildRequires : pkgconfig(libxml-2.0)
+BuildRequires : pkgconfig(spice-client-glib-2.0)
 BuildRequires : pkgconfig(spice-client-gtk-3.0)
+BuildRequires : pkgconfig(spice-controller)
+BuildRequires : pkgconfig(spice-protocol)
 BuildRequires : shared-mime-info
 BuildRequires : spice-gtk
 BuildRequires : spice-gtk-dev
@@ -70,14 +76,14 @@ locales components for the virt-viewer package.
 
 
 %prep
-%setup -q -n virt-viewer-5.0
+%setup -q -n virt-viewer-6.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1493804510
+export SOURCE_DATE_EPOCH=1502824958
 %configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
 make V=1  %{?_smp_mflags}
 
@@ -89,7 +95,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1493804510
+export SOURCE_DATE_EPOCH=1502824958
 rm -rf %{buildroot}
 %make_install
 %find_lang virt-viewer
