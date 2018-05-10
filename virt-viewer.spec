@@ -6,7 +6,7 @@
 #
 Name     : virt-viewer
 Version  : 6.0
-Release  : 10
+Release  : 11
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
 Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz.asc
