@@ -1,4 +1,171 @@
+2018-07-27  Daniel P. Berrangé  <berrange@redhat.com>
+
+	Add NEWS for 7.0 release
+
+	Bump min spice to 0.35 and address deprecation warnings
+
+	Disable -Wcast-function-type warning
+	Most glib function casts trigger this
+
+2018-06-04  Victor Toso  <me@victortoso.com>
+
+	remote-viewer-connect: centralize window
+	Instead of top-left corner.
+
+	Resolves: https://bugzilla.redhat.com/show_bug.cgi?id=1508274
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+2018-05-02  Christophe Fergeau  <cfergeau@redhat.com>
+
+	win32: Look up translations relative to installation directory
+	On Windows, we can't use bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR); as
+	LOCALE_DIR is a compile-time constant, while the location of the
+	translations will be dependant on where the user installs virt-viewer.
+	This results in an untranslated virt-viewer UI on Windows. This commit
+	calls bindtextdomain() with a directory which is relative to the
+	installation path so that translation are properly found.
+	This is similar to what spice-gtk is doing:
+	https://cgit.freedesktop.org/spice/spice-gtk/tree/src/spice-glib-main.c
+
+2017-12-04  Daniel P. Berrange  <berrange@redhat.com>
+
+	Refresh po files from zanata
+
+2017-11-23  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	Fixes to spec file
+	- Use macros for paths instead of absolute paths.
+	- Remove dangling %{gtk_arg} macro in configure.
+	- Fix scope of enable_autotools macro to avoid warning during build.
+	  warning: Macro %enable_autotools defined but not used within scope
+
+2017-11-22  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	doc: Adjust reference to spice-gtk man page for remote-viewer
+	Similar to last commit, as noticed by reporter in bugzilla:
+
+	https://bugzilla.redhat.com/show_bug.cgi?id=1477966
+
+	Man page should reference spice-client, not spice-gtk.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2017-11-17  Christophe Fergeau  <cfergeau@redhat.com>
+
+	doc: Adjust reference to spice-gtk man page
+	The man page spice-gtk ships is named "spice-client", not "spice-gtk"
+
+	Reviewed-by: Daniel P. Berrange <berrange@redhat.com>
+
+	https://bugzilla.redhat.com/show_bug.cgi?id=1477966
+
+2017-11-17  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	virt-viewer.spec.in: fix build after spice-xpi-client removal
+	This fixes commit 140cb84c2538bf0eab7dea2035dfecc4db74c784, where we
+	removed the spice-xpi-client-remote-viewer.
+
+	Reviewed-by: Daniel P. Berrange <berrange@redhat.com>
+
+2017-11-16  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	win32: remove debug-helper.exe
+	This helper was useful to debug spice controller & activex plugin. Now
+	that the controller is gone, it is no longer needed.
+
+	Reviewed-by: Victor Toso <victortoso@redhat.com>
+
+	remote-viewer: remove --spice-controller
+	spice controller interface is being removed from spice-gtk.
+
+	Reviewed-by: Victor Toso <victortoso@redhat.com>
+
+	remote-viewer: learn '-' as URI for standard input connection file
+	Some users want the ability to set connection details without writing
+	to a file or passing command line arguments.
+
+	Learn to read the connection file from standard input for such use
+	case.
+
+	This allows a parent process to set the connection details without
+	intermediary file.
+
+	Reviewed-by: Victor Toso <victortoso@redhat.com>
+
+2017-11-14  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	remote-viewer: Pass guri to remote_viewer_session_connected
+	When connecting to a VM via oVirt instance, the original uri can not be
+	retrieved using virt_viewer_session_get_uri(). Consequently, it was
+	never saved, even though the connection succeeds and the actual callback
+	for "session-connected" signal, which saves the URI, is invoked.
+
+	To solve this problem, we always pass a copy of the guri as user-data
+	parameter for the callback, and if the call to
+	virt_viewer_session_get_uri() returns NULL, the parameter is used
+	instead.
+
+	Resolves: https://bugzilla.redhat.com/1459792
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2017-10-06  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	foreign-menu: Check if storage domain is active for data center
+	This last patch of the series is where we actually check if the storage
+	domain is active in the data center the VM is associated with. It makes
+	use of g_strv_contains(), which is available only in glib version 2.44.
+	Compatibility code has been added if building against older versions
+	than required.
+
+	Related: https://bugzilla.redhat.com/show_bug.cgi?id=1427467
+	         https://bugzilla.redhat.com/show_bug.cgi?id=1428401
+
+	ovirt-foreign-menu: Fetch host, cluster and data center information
+	It is possible that the data center the VM is associated with has more
+	than one storage domain associated with it as well, when only one is
+	active while the others are not.
+
+	The current ovir-foreign-menu code does not take it into consideration,
+	thus the ISO dialog may show invalid results with that scenario. We fix
+	this problem by making use of new functions in libgovirt, adding support
+	or hosts, clusters and data centers.
+
+	Related: https://bugzilla.redhat.com/show_bug.cgi?id=1427467
+	         https://bugzilla.redhat.com/show_bug.cgi?id=1428401
+
+	foreign-menu: Use query for fetching virtual machines
+	This can save us some bandwidth, as we are searching for the specific
+	virtual machine instead of retrieving the collection with all VMs, and
+	then iterating over the results after the transfer finishes.
+
+	configure: check for new functions in libgovirt
+	These functions will be used in ovirt-foreign-menu code and guarded
+	by #ifdef blocks so that we can keep compatibility with older libgovirt
+	versions.
+
+	Related: https://bugzilla.redhat.com/show_bug.cgi?id=1427467
+	         https://bugzilla.redhat.com/show_bug.cgi?id=1428401
+
+2017-10-06  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	remote-viewer: factor our remote_viewer_initial_connect()
+
+	session: remove virt_viewer_session_new() declaration
+	The function was removed in commit
+	05333f0e93fb988c2fd9302e67671490941aedb0.
+
+2017-09-14  Guido Günther  <agx@sigxcpu.org>
+
+	Make it clear that only running VMs are listed
+	this might otherwise be confusing.
+
+	Reference: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=873597#25
+
 2017-08-15  Daniel P. Berrange  <berrange@redhat.com>
+
+	Post release version bump to 7.0
 
 	Add NEWS for 6.0 release
 

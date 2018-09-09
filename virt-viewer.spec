@@ -5,18 +5,19 @@
 # Source0 file verified with key 0xBE86EBB415104FDF (dan@berrange.com)
 #
 Name     : virt-viewer
-Version  : 6.0
-Release  : 11
-URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
-Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz
-Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-6.0.tar.gz.asc
+Version  : 7.0
+Release  : 12
+URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
+Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
+Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz.asc
 Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
 Requires: virt-viewer-bin
 Requires: virt-viewer-data
+Requires: virt-viewer-license
 Requires: virt-viewer-locales
-Requires: virt-viewer-doc
+Requires: virt-viewer-man
 BuildRequires : gettext
 BuildRequires : gtk+-dev
 BuildRequires : intltool
@@ -31,7 +32,6 @@ BuildRequires : pkgconfig(libvirt-glib-1.0)
 BuildRequires : pkgconfig(libxml-2.0)
 BuildRequires : pkgconfig(spice-client-glib-2.0)
 BuildRequires : pkgconfig(spice-client-gtk-3.0)
-BuildRequires : pkgconfig(spice-controller)
 BuildRequires : pkgconfig(spice-protocol)
 BuildRequires : shared-mime-info
 BuildRequires : spice-gtk
@@ -46,6 +46,8 @@ the display, and libvirt for looking up VNC/SPICE server details.
 Summary: bin components for the virt-viewer package.
 Group: Binaries
 Requires: virt-viewer-data
+Requires: virt-viewer-license
+Requires: virt-viewer-man
 
 %description bin
 bin components for the virt-viewer package.
@@ -59,12 +61,12 @@ Group: Data
 data components for the virt-viewer package.
 
 
-%package doc
-Summary: doc components for the virt-viewer package.
-Group: Documentation
+%package license
+Summary: license components for the virt-viewer package.
+Group: Default
 
-%description doc
-doc components for the virt-viewer package.
+%description license
+license components for the virt-viewer package.
 
 
 %package locales
@@ -75,17 +77,25 @@ Group: Default
 locales components for the virt-viewer package.
 
 
+%package man
+Summary: man components for the virt-viewer package.
+Group: Default
+
+%description man
+man components for the virt-viewer package.
+
+
 %prep
-%setup -q -n virt-viewer-6.0
+%setup -q -n virt-viewer-7.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1502824958
+export SOURCE_DATE_EPOCH=1536454554
 %configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
 %check
 export LANG=C
@@ -95,8 +105,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1502824958
+export SOURCE_DATE_EPOCH=1536454554
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/doc/virt-viewer
+cp COPYING %{buildroot}/usr/share/doc/virt-viewer/COPYING
 %make_install
 %find_lang virt-viewer
 
@@ -122,9 +134,14 @@ rm -rf %{buildroot}
 /usr/share/icons/hicolor/48x48/apps/virt-viewer.png
 /usr/share/mime/packages/virt-viewer-mime.xml
 
-%files doc
+%files license
 %defattr(-,root,root,-)
-%doc /usr/share/man/man1/*
+/usr/share/doc/virt-viewer/COPYING
+
+%files man
+%defattr(-,root,root,-)
+/usr/share/man/man1/remote-viewer.1
+/usr/share/man/man1/virt-viewer.1
 
 %files locales -f virt-viewer.lang
 %defattr(-,root,root,-)
