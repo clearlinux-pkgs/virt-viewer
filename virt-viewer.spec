@@ -6,18 +6,18 @@
 #
 Name     : virt-viewer
 Version  : 7.0
-Release  : 13
+Release  : 14
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
 Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz.asc
 Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
-Requires: virt-viewer-bin
-Requires: virt-viewer-data
-Requires: virt-viewer-license
-Requires: virt-viewer-locales
-Requires: virt-viewer-man
+Requires: virt-viewer-bin = %{version}-%{release}
+Requires: virt-viewer-data = %{version}-%{release}
+Requires: virt-viewer-license = %{version}-%{release}
+Requires: virt-viewer-locales = %{version}-%{release}
+Requires: virt-viewer-man = %{version}-%{release}
 BuildRequires : gettext
 BuildRequires : gtk+-dev
 BuildRequires : intltool
@@ -45,9 +45,9 @@ the display, and libvirt for looking up VNC/SPICE server details.
 %package bin
 Summary: bin components for the virt-viewer package.
 Group: Binaries
-Requires: virt-viewer-data
-Requires: virt-viewer-license
-Requires: virt-viewer-man
+Requires: virt-viewer-data = %{version}-%{release}
+Requires: virt-viewer-license = %{version}-%{release}
+Requires: virt-viewer-man = %{version}-%{release}
 
 %description bin
 bin components for the virt-viewer package.
@@ -93,7 +93,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1536454554
+export SOURCE_DATE_EPOCH=1543349389
 %configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
 make  %{?_smp_mflags}
 
@@ -105,10 +105,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1536454554
+export SOURCE_DATE_EPOCH=1543349389
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/doc/virt-viewer
-cp COPYING %{buildroot}/usr/share/doc/virt-viewer/COPYING
+mkdir -p %{buildroot}/usr/share/package-licenses/virt-viewer
+cp COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/COPYING
 %make_install
 %find_lang virt-viewer
 
@@ -132,14 +132,14 @@ cp COPYING %{buildroot}/usr/share/doc/virt-viewer/COPYING
 /usr/share/icons/hicolor/256x256/apps/virt-viewer.png
 /usr/share/icons/hicolor/32x32/apps/virt-viewer.png
 /usr/share/icons/hicolor/48x48/apps/virt-viewer.png
-/usr/share/mime/packages/virt-viewer-mime.xml
+/usr/share/mime-packages/virt-viewer-mime.xml
 
 %files license
-%defattr(-,root,root,-)
-/usr/share/doc/virt-viewer/COPYING
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/virt-viewer/COPYING
 
 %files man
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 /usr/share/man/man1/remote-viewer.1
 /usr/share/man/man1/virt-viewer.1
 
