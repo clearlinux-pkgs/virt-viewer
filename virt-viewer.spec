@@ -5,12 +5,12 @@
 # Source0 file verified with key 0xBE86EBB415104FDF (dan@berrange.com)
 #
 Name     : virt-viewer
-Version  : 7.0
-Release  : 14
-URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
-Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz
-Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-7.0.tar.gz.asc
-Summary  : Virtual Machine Viewer
+Version  : 8.0
+Release  : 15
+URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
+Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
+Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz.asc
+Summary  : A lightweight interface for interacting with the graphical display of virtualized guest OS.
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
 Requires: virt-viewer-bin = %{version}-%{release}
@@ -30,10 +30,11 @@ BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(libvirt)
 BuildRequires : pkgconfig(libvirt-glib-1.0)
 BuildRequires : pkgconfig(libxml-2.0)
+BuildRequires : pkgconfig(rest-0.7)
 BuildRequires : pkgconfig(spice-client-glib-2.0)
 BuildRequires : pkgconfig(spice-client-gtk-3.0)
 BuildRequires : pkgconfig(spice-protocol)
-BuildRequires : shared-mime-info
+BuildRequires : pkgconfig(vte-2.91)
 BuildRequires : spice-gtk
 BuildRequires : spice-gtk-dev
 
@@ -47,7 +48,6 @@ Summary: bin components for the virt-viewer package.
 Group: Binaries
 Requires: virt-viewer-data = %{version}-%{release}
 Requires: virt-viewer-license = %{version}-%{release}
-Requires: virt-viewer-man = %{version}-%{release}
 
 %description bin
 bin components for the virt-viewer package.
@@ -86,14 +86,21 @@ man components for the virt-viewer package.
 
 
 %prep
-%setup -q -n virt-viewer-7.0
+%setup -q -n virt-viewer-8.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1543349389
+export SOURCE_DATE_EPOCH=1557079395
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
 make  %{?_smp_mflags}
 
@@ -105,7 +112,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1543349389
+export SOURCE_DATE_EPOCH=1557079395
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/virt-viewer
 cp COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/COPYING

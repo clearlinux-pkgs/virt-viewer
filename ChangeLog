@@ -1,4 +1,540 @@
+2019-03-01  Daniel P. Berrangé  <berrange@redhat.com>
+
+	Update NEWS for 8.0 release
+
+	rpm: use the mingw hicolor icon theme not native
+
+	Add glib2-devel for mingw build
+	The native glib2-devel package is needed for mingw builds in order to
+	get the glib-compile-schemas binary.
+
+2019-02-22  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	iso-dialog: Move type definitions from header to source file
+	There is no reason for this object to define a private structure, so it
+	is fine to make everything private to the dialog itself.
+
+	Update usage of GObject private structures
+	New functions and macros have been added in glib 2.38 to better handle
+	this case.
+
+	https://gitlab.gnome.org/GNOME/glib/blob/c8de2b11bbbf5705ee20bf68d0c11e455b441312/NEWS
+
+	The old method is being deprecated as of version 2.58.
+
+	https://gitlab.gnome.org/GNOME/glib/merge_requests/7/commits
+
+2019-02-19  Daniel P. Berrangé  <berrange@redhat.com>
+
+	msi: record full build environment in MSI installer
+	For proper compliance with the GPL and other licenses we need to be
+	clear about exactly what toolchain and dependent packages we used in
+	order to build the MSI installer we distribute.
+
+	Historically we've done this by including a "deps.txt" file which
+	provides a list of all the mingw{32,64}-* RPMs on the host system.
+
+	This is not sufficient information, however, because the build system
+	will in fact use various native packages too from the toolchain too,
+	notably including any program run by "configure" which covers various
+	shell utilities, and pkg-config, and then of course make & msitools
+	itself.
+
+	Rather than try to figure out which subset of host RPMs are used,
+	just list every single host RPM that is installed.
+
+	A key implication of this is that formal release builds should always
+	be done in a pristine build root populated with the minimal content
+	required for the build.
+
+	Declare VirtViewerFile variable at start of method
+	virt_viewer_session_vnc_auth_credential uses gotos which jump over the
+	declaration of 'file', meaning its contents are uninitialized in the
+	jump target.
+
+	Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+
+	Fix prototype of function with no arguments
+	Modern C standard requires the function to be "void"
+
+	Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+
+	Fix signed/unsigned mixup in format args
+	Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+
+2019-02-13  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	window: Use proper define from glib for ignoring deprecated warning
+	Reviewed-by: Daniel P. Berrangé <berrange@redhat.com>
+
+2019-02-12  Daniel P. Berrangé  <berrange@redhat.com>
+
+	Disable deprecation warnings for gtk_window_fullscreen_on_monitor
+	We use GLIB_VERSION_MAX_ALLOWED to prevent use of functions from
+	GTK >= 3.12. When we do conditional compilation based on a GTK
+	version check, we must thus suppress the warning:
+
+	  CC       libvirt_viewer_la-virt-viewer-window.lo
+	../../src/virt-viewer-window.c: In function 'virt_viewer_window_enter_fullscreen':
+	../../src/virt-viewer-window.c:608:9: error: 'gtk_window_fullscreen_on_monitor' is deprecated: Not available before 3.18 [-Werror=deprecated-declarations]
+	         gtk_window_fullscreen_on_monitor(GTK_WINDOW(priv->window),
+	         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	In file included from /usr/include/gtk-3.0/gtk/gtkdialog.h:32,
+	                 from /usr/include/gtk-3.0/gtk/gtkaboutdialog.h:30,
+	                 from /usr/include/gtk-3.0/gtk/gtk.h:31,
+	                 from ../../src/virt-viewer-window.c:28:
+	/usr/include/gtk-3.0/gtk/gtkwindow.h:391:10: note: declared here
+	 void     gtk_window_fullscreen_on_monitor(GtkWindow *window,
+	          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	cc1: all warnings being treated as errors
+
+2019-02-04  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	build-sys: lower spice-gtk requirement to 0.35 again
+	Compile out QMP channel support if spice-gtk version < 0.36.
+
+	(note: I didn't bother adding configure switch to enable it
+	explicitly, this could be added later if necessary)
+
+	Reviewed-by: Daniel P. Berrangé <berrange@redhat.com>
+
+2019-02-01  Paul Donohue  <virt-tools@PaulSD.com>
+
+	Report gtk_accel_map_change_entry() failures
+	Message-Id: <1533340753-24176-2-git-send-email-virt-tools@PaulSD.com>
+	Reviewed-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+
+2019-02-01  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	spice: hook into QMP port
+	If the "org.qemu.monitor.qmp.0" port is available:
+	- enable the VM UI
+	- get and follow the VM state
+	- send the requested VM actions
+
+	This requires spice-gtk version 0.36 with SpiceQmpPort helper.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	spice: hook into port channel to create VTE terminals
+	QEMU defines a few Spice port channel names in
+	docs/spice-port-fqdn.txt that can be interacted with a terminal.
+
+	Create VirtViewerDisplayVte display for all known terminal channel,
+	and redirect read/write signals.
+
+	Note that if VTE support is disabled, or if the VTE console isn't
+	shown, spice-gtk will still process those port channels (discarding
+	the read if VTE is disabled).
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	session: do not take VTE display into account for geometry changes
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2019-01-28  Jonathon Jongsma  <jjongsma@redhat.com>
+
+	Fix regression when showing disconnect error
+	Commit 65ef66e42 introduced a regression due to lack of type-safety on
+	signals. We mistakenly passed a GError rather than a string error
+	message to the signal.
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+2019-01-18  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	Add missing G_MODULE_EXPORT to signal handler
+	Fixes the Windows case where the dialog fails to show with the following
+	message:
+
+	warning: "Could not find signal handler 'virt_viewer_window_menu_change_cd_activate'"
+
+2018-12-21  Daniel P. Berrangé  <berrange@redhat.com>
+
+	Add src/virt-viewer-display-vte.c to POTFILES
+
+2018-12-21  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	app: add "vm-running" property
+	Add "vm-running" property and modify "menu-vm-pause" check button
+	state when the running state changes.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	app: add "machine" UI
+	Add a new "Machine" menu, which allows to Pause/Reset/Power Down a VM.
+
+	The menu is only visible if "vm-ui" app property is set.
+
+	When the application quits, it will also send a quit action to the VM.
+
+	This is a similar behaviour/UI as qemu -display gtk.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	app: create a window for VTE displays
+	virt_viewer_app_display_added() now handles VTE displays. They should
+	be skipped for monitor configuration, and they don't emit "show-hint".
+
+	(a VTE display has a monitor nth == -1, which is now a valid value)
+
+	The associated window will be hidden when virt-viewer is started.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	spice: add unix-path in .vv file support
+	This will allow to connect to a Spice server using a unix socket path,
+	for example:
+
+	[virt-viewer]
+	type=spice
+	unix-path=/var/run/user/1000/qemu/test/spice.sock
+
+	Reviewed-by: Christophe Fergeau <cfergeau@redhat.com>
+
+	display: allow display without associated monitor number
+	The VTE display will have monitor id -1.
+
+	Eventually, having a base "console" class without monitor id could
+	avoid this allowance.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	app: append VTE consoles to display submenu
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	app: set subtitle using VTE name
+	Currently, subtitle indicate the monitor number, ex: "Fedora (1)".
+
+	Custom subtitle use %d to place the monitor number.
+
+	Let's make this placeholder more generic to place the name of the
+	console, ex: "Fedora (Serial)".
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	session: skip monitor changes if there is no sized monitors
+	spice-gtk discards configurations without any sized monitors.
+
+	Also shuts extra warnings when shifting the monitors.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	display: ignore display that do not have toplevel window
+	virt_viewer_display_get_preferred_monitor_geometry() may be called
+	during application initialization (when the VTE console is being
+	shown, virt_viewer_session_update_displays_geometry() is called when
+	the visibility menu item is toggled). But the other displays may not
+	yet be associated with a window, ignore them.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	window/zoom: deal with VTE display differently
+	VTE display doesn't use the desktop / window aspect ratio, let's just
+	call directly the functions handling zoom.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	Add a VirtViewerDisplayVte display kind
+	This is not a graphical display, so the application will have to deal
+	with it with care.
+
+	You may argue that we need a large refactoring to introduce a more
+	generic "console" object, that could be either graphical or textual.
+	For now, this does work well enough for me.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	build-sys: check for VTE library
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	window: set sensitivity based on display capability
+	A following patch is adding a new display (VTE) that won't have the
+	send_key() or screenshot() callbacks. Activating those menu/actions
+	would lead to nothing or a crash. I chose to keep the UI consistent
+	for all display, but disable the menu sensitivity.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	window: do not reset sensitivity of menu-send in rebuild
+	The sensitivy of "menu-send" is getting more complex in the following
+	patch. Let's have the logic in a single place,
+	virt_viewer_window_set_menus_sensitive().
+
+	rebuild_combo_menu() is called in 2 cases:
+
+	1. notify::enable-accel: there is no need to update the sensitivy of
+	   "menu-send"
+
+	2. on construction: default to false since display == NULL. It will be
+	   later updated when virt_viewer_window_set_menus_sensitive(). The
+	   default sensitivity is covered by previous .ui patch change.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2018-12-06  Christophe Fergeau  <cfergeau@redhat.com>
+
+	ovirt: Fix initial connection
+	After commit df42f78d46 "remote-viewer: factor our
+	remote_viewer_initial_connect()", the initial connection code only gets
+	run in the !ovirt case. When ovirt is in use, the initial connection
+	never happens, meaning all we get when using ovirt:// is a blank
+	virt-viewer window.
+
+	This commit fixes that by moving creation of the ovirt session to
+	remote_viewer_initial_connect, and unconditionnally calling the
+	remote_viewer_initial_connect rather than only doing it in the !ovirt
+	case.
+
+	https://bugzilla.redhat.com/show_bug.cgi?id=1655537
+
+2018-12-05  Ben Mathews  <beniam@yahoo.com>
+
+	Set window title to VM name
+	The attached patch address an issue with virt-view not setting the
+	titlebar text to be the title of the VM (previously discussed on:
+	https://www.redhat.com/archives/virt-tools-list/2018-September/msg00064.html).
+
+2018-12-04  Jonathon Jongsma  <jjongsma@redhat.com>
+
+	Silence coverity warning about dead code
+	For some reason, coverity was complaining that the definition of
+	cred_type_to_str was dead code, even though it wasn't. Changing the
+	storage to static silences the warning. Since that's a benficial change
+	anyway, let's change it. At the same time, make the pointer constant as
+	well and move it outside of the loop since it doesn't need to be inside
+	the loop.
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+	Avoid potential memory leak in spice session
+	If j == -1, the memory allocated for rect will leak. So move the
+	allocation after the test.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2018-11-13  Andrea Bolognani  <abologna@redhat.com>
+
+	spec: Drop %{extra_release}
+	It was mainly meant to be used for automatic builds through
+	Test::AutoBuild, so it can be removed now.
+
+	prepare-release: Drop references to Test::AutoBuild
+	They are misleading, and no longer relevant anyway.
+
+	maint: Rename autobuild.sh to prepare-release.sh
+	The script was originally used by the Test::AutoBuild
+	project to perform periodic automatic builds; however, that
+	effort has been abandoned a long time ago, and these days
+	virt-viewer CI builds are happening on the Jenkins-based
+	CentOS CI environment under the libvirt umbrella[1], where
+	build recipes are maintained separately from the projects
+	themselves.
+
+	The script is still used to prepare releases, so it can't
+	be dropped from the repository: rename it so that its
+	purpose is more clearly communicated instead.
+
+	[1] https://ci.centos.org/view/libvirt/
+
+2018-11-09  Jonathon Jongsma  <jjongsma@redhat.com>
+
+	Relax Gtk+ requirement slightly
+	We previously bumped the gtk+ requirement to 3.18 for the function
+	gtk_window_fullscreen_on_monitor(). But this function is only necessary
+	in Wayland. So add some preprocessor version checks to allow it to
+	compile on older distributions if they don't care about wayland support.
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+2018-10-16  Qiu Wenbo  <qiuwenbo@kylinos.com.cn>
+
+	win32: fix command line encoding on windows platform
+	On Windows, the arguments we get in GApplication::ocal_command_line
+	come from g_win32_get_command_line(), and g_option_context_parse_strv()
+	documentation says:
+	« On Windows, the strings are expected to be in UTF-8. This is in
+	contrast to g_option_context_parse() which expects them to be in the
+	system codepage, which is how they are passed as argv to main(). See
+	g_win32_get_command_line() for a solution. »
+
+	This was causing issues on Windows when running:
+	remote-viewer -t "你好" spice://<target-host>:5900
+
+2018-10-15  Jonathon Jongsma  <jjongsma@redhat.com>
+
+	Fullscreen displays on wrong monitors in Wayland
+	In fullscreen mode, we attempt to enable a guest display for each client
+	monitor and then place a fullscreen window for each display on the
+	appropriate monitor. Previously, we were using gtk_window_move() to move
+	the window to the proper monitor, and then calling
+	gtk_window_fullscreen() to enter fullscreen mode on that monitor.
+	However, under wayland, gtk_window_move() no longer has any effect for
+	toplevel windows, so all displays were showing up on top of eachother on
+	the same client monitor.
+
+	Fortunately, Gtk+ 3.18 added a new gtk_window_fullscreen_on_monitor()
+	API that works on Wayland. In theory this allows us to remove the call
+	to gtk_window_move() from the code. But to avoid potentially changing
+	behavior on xorg or older systems, I left the existing logic.
+
+	This requires a dependency bump for gtk+ from 3.12 to 3.18. Gtk 3.18 is
+	provided by the following distributions (or newer):
+	 - RHEL 7.4
+	 - Fedora 23
+	 - Ubuntu 16.04LTS
+
+	Resolves: rhbz#1584561
+
+	Acked-by: Christophe Fergeau <cfergeau@redhat.com>
+
+2018-09-25  Marc-André Lureau  <marcandre.lureau@redhat.com>
+
+	display: make klass->close() optional
+	Spice and VTE display do not need to implement it.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	window: move default sensitivity in .ui
+	Instead of modifying it in object initialization.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	window: use virt_viewer_window_set_menus_sensitive()
+	virt_viewer_window_set_menus_sensitive() is the common function to set
+	sensitivity on menu items.
+
+	It was lacking "toolbar_send_key", so add it there too.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	app: simplify toggling visibility
+	There is a hack to maintain the toggle state to a desired state within
+	the "toggled" handler.
+
+	However it is only necessary for the ask-quit case. In this case, we
+	want to maintain the item active, which is simpler to handle than the
+	general case. Simplify the code by folding
+	virt_viewer_app_window_set_visible() and removing the static
+	"reentering" hack, only maintaining "active" on the last item.
+
+	Note that the hack was needed since there is no way to hook a signal
+	handler on "clicked" before "toggled" is emitted and handled by Gtk,
+	to avoid the recursion.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	Remove class signal handlers
+	We don't use class signal handlers, remove the extra pointers.
+
+	g_signal_override_class_handler() could be used instead when needed.
+
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+	remote-viewer: add handling of spice+unix and spice+tls schemes
+	- spice+unix:// was added in spice-gtk v0.28
+	- spice+tls:// was added in spice-gtk v0.35
+
+	This allows launchers to start remote-viewer when they encounter a
+	Spice URI with +unix or +tls.
+
+	Acked-by: Jonathon Jongsma <jjongsma@redhat.com>
+	Acked-by: Victor Toso <victortoso@redhat.com>
+
+2018-09-18  Jonathon Jongsma  <jjongsma@redhat.com>
+
+	Spice: listen for new 'SpiceSession::disconnected' signal
+	Previously we were emitting the VirtViewerSession::session-disconnected
+	when we got the Spice::session::channel-destroy signal for the last
+	channel. However, since the channels are still valid at this point, and
+	because VirtViewerApp quits the application in response to the
+	session-disconnected signal, that means that the channels were never
+	being properly freed. This was particularly problematic for the usbredir
+	channel, which must disconnect any connected USB devices as part of its
+	destruction. By using the new SpiceSession::disconnected signal instead,
+	we can ensure that all channels have been disconnected and properly
+	destroyed before quitting the application.
+
+2018-09-12  Eduardo Lima (Etrunko)  <etrunko@redhat.com>
+
+	ovirt-foreign-menu: New function storage_domain_validate()
+	It may be useful to know why the storage domain has not been listed,
+	given that there are different reasons for that. To make it easier to
+	provide more detailed debug messages, we move code from the callback
+	function to this new one.
+
+	Acked-by: Christophe Fergeau <cfergeau@redhat.com>
+
+	build: Update govirt and rest requirements
+	With these new values, 0.3.3 for libgovirt and 0.8 for librest, we can
+	remove checks for OVIRT_REST_CALL_ERROR_CANCELLED and correspondent
+	rest_proxy_auth_cancel().
+
+	Distros that already ship these versions, such as Fedora, RHEL 7.4
+	onwards, and Ubuntu since 17.10.
+
+	Acked-by: Christophe Fergeau <cfergeau@redhat.com>
+
+2018-09-03  Victor Toso  <me@victortoso.com>
+
+	app: Always add guest name comment
+	Even when the user adds comments, we should place the guest's name
+	unless it is present already.
+
+	Resolves: https://bugzilla.redhat.com/show_bug.cgi?id=1623756
+
+	Acked-by: Christophe Fergeau <cfergeau@redhat.com>
+
+2018-08-31  Christophe Fergeau  <cfergeau@redhat.com>
+
+	ovirt: Filter everything which does not end in .iso
+	oVirt REST API does not provide a way to know what is a valid ISO image
+	which can be assigned to a running VM. I've seen floppy disk images
+	(.vfd) in a domain, which is already filtered. Now I've seen an ISO
+	domain with .qcow2 files in it, which can't be assigned to a VM either.
+	This commit filters every file which does not have a .iso extension as
+	it's unlikely to be possible to use it.
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+2018-08-07  Christophe Fergeau  <cfergeau@redhat.com>
+
+	ovirt: Improve handling of g_strv_contains()
+	The ovirt code uses g_strv_contains() with fallback code in
+	glib-compat.h when we are using a glib version where it's not available.
+	However, when we use a glib version where g_strv_contains is available,
+	we get a compilation warning since we are compiling GLIB_VERSION_MAX_ALLOWED
+	set to 2.38.
+
+	This commit wraps both the compat code and the g_strv_contains() call in
+	a strv_contains() helper where we can hide the magic needed to avoid
+	deprecation warnings.
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+	window: Adjust get_image_format() prototype
+	This adds an unused parameter, but lets us get rid of this new warning
+	with gcc 8:
+
+	virt-viewer-window.c: In function 'get_image_format':
+	virt-viewer-window.c:930:33: warning: cast between incompatible function types from 'GHashTable * (*)(void)' {aka 'struct _GHashTable * (*)(void)'} to 'void * (*)(void *)' [-Wcast-function-type]
+	     g_once(&image_formats_once, (GThreadFunc)init_image_formats, NULL);
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
+2018-08-06  Christophe Fergeau  <cfergeau@redhat.com>
+
+	app: Remove VirtViewerApp::has-focus
+	This is no longer needed since 140cb84
+	'remote-viewer: remove --spice-controller'
+
+	Acked-by: Eduardo Lima (Etrunko) <etrunko@redhat.com>
+
 2018-07-27  Daniel P. Berrangé  <berrange@redhat.com>
+
+	rpm: import spec changes from fedora
+
+	Post release version bump to 8.0
 
 	Add NEWS for 7.0 release
 
