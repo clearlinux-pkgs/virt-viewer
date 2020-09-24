@@ -6,7 +6,7 @@
 #
 Name     : virt-viewer
 Version  : 8.0
-Release  : 16
+Release  : 17
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
 Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz.asc
