@@ -6,11 +6,11 @@
 #
 Name     : virt-viewer
 Version  : 8.0
-Release  : 17
+Release  : 18
 URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
 Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
-Source99 : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz.asc
-Summary  : A lightweight interface for interacting with the graphical display of virtualized guest OS.
+Source1  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz.asc
+Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
 Requires: virt-viewer-bin = %{version}-%{release}
@@ -87,37 +87,50 @@ man components for the virt-viewer package.
 
 %prep
 %setup -q -n virt-viewer-8.0
+cd %{_builddir}/virt-viewer-8.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1557079395
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1604600396
+export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
 make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
+make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1557079395
+export SOURCE_DATE_EPOCH=1604600396
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/virt-viewer
-cp COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/COPYING
+cp %{_builddir}/virt-viewer-8.0/COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
 %make_install
 %find_lang virt-viewer
+## Remove excluded files
+rm -f %{buildroot}/usr/share/mime/XMLnamespaces
+rm -f %{buildroot}/usr/share/mime/aliases
+rm -f %{buildroot}/usr/share/mime/generic-icons
+rm -f %{buildroot}/usr/share/mime/globs
+rm -f %{buildroot}/usr/share/mime/globs2
+rm -f %{buildroot}/usr/share/mime/magic
+rm -f %{buildroot}/usr/share/mime/mime.cache
+rm -f %{buildroot}/usr/share/mime/subclasses
+rm -f %{buildroot}/usr/share/mime/treemagic
+rm -f %{buildroot}/usr/share/mime/types
 
 %files
 %defattr(-,root,root,-)
@@ -143,7 +156,7 @@ cp COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/COPYING
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/virt-viewer/COPYING
+/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
 
 %files man
 %defattr(0644,root,root,0755)
