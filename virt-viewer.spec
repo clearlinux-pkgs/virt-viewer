@@ -5,11 +5,11 @@
 # Source0 file verified with key 0xBE86EBB415104FDF (dan@berrange.com)
 #
 Name     : virt-viewer
-Version  : 8.0
-Release  : 18
-URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
-Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz
-Source1  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-8.0.tar.gz.asc
+Version  : 10.0
+Release  : 19
+URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz
+Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz
+Source1  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz.asc
 Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
@@ -18,25 +18,19 @@ Requires: virt-viewer-data = %{version}-%{release}
 Requires: virt-viewer-license = %{version}-%{release}
 Requires: virt-viewer-locales = %{version}-%{release}
 Requires: virt-viewer-man = %{version}-%{release}
-BuildRequires : gettext
+BuildRequires : bash-completion-dev
+BuildRequires : buildreq-meson
+BuildRequires : desktop-file-utils
 BuildRequires : gtk+-dev
-BuildRequires : intltool
-BuildRequires : perl(XML::Parser)
-BuildRequires : pkgconfig(gio-2.0)
-BuildRequires : pkgconfig(glib-2.0)
-BuildRequires : pkgconfig(gmodule-export-2.0)
-BuildRequires : pkgconfig(gthread-2.0)
+BuildRequires : pkgconfig(bash-completion)
 BuildRequires : pkgconfig(gtk+-3.0)
-BuildRequires : pkgconfig(libvirt)
 BuildRequires : pkgconfig(libvirt-glib-1.0)
-BuildRequires : pkgconfig(libxml-2.0)
 BuildRequires : pkgconfig(rest-0.7)
-BuildRequires : pkgconfig(spice-client-glib-2.0)
-BuildRequires : pkgconfig(spice-client-gtk-3.0)
-BuildRequires : pkgconfig(spice-protocol)
 BuildRequires : pkgconfig(vte-2.91)
+BuildRequires : rest-dev
 BuildRequires : spice-gtk
 BuildRequires : spice-gtk-dev
+BuildRequires : vte-dev
 
 %description
 Virtual Machine Viewer provides a graphical console client for connecting
@@ -86,15 +80,15 @@ man components for the virt-viewer package.
 
 
 %prep
-%setup -q -n virt-viewer-8.0
-cd %{_builddir}/virt-viewer-8.0
+%setup -q -n virt-viewer-10.0
+cd %{_builddir}/virt-viewer-10.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1604600396
+export SOURCE_DATE_EPOCH=1621443996
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -103,22 +97,20 @@ export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
-%configure --disable-static --with-gtk=3.0 --disable-update-mimedb --with-spice-gtk
-make  %{?_smp_mflags}
+CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" meson --libdir=lib64 --prefix=/usr --buildtype=plain   builddir
+ninja -v -C builddir
 
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make %{?_smp_mflags} check
+meson test -C builddir
 
 %install
-export SOURCE_DATE_EPOCH=1604600396
-rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/virt-viewer
-cp %{_builddir}/virt-viewer-8.0/COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
-%make_install
+cp %{_builddir}/virt-viewer-10.0/COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
+DESTDIR=%{buildroot} ninja -C builddir install
 %find_lang virt-viewer
 ## Remove excluded files
 rm -f %{buildroot}/usr/share/mime/XMLnamespaces
@@ -142,16 +134,16 @@ rm -f %{buildroot}/usr/share/mime/types
 
 %files data
 %defattr(-,root,root,-)
-/usr/share/appdata/remote-viewer.appdata.xml
 /usr/share/applications/remote-viewer.desktop
+/usr/share/bash-completion/completions/virt-viewer
 /usr/share/icons/hicolor/16x16/apps/virt-viewer.png
 /usr/share/icons/hicolor/22x22/apps/virt-viewer.png
 /usr/share/icons/hicolor/24x24/apps/virt-viewer.png
-/usr/share/icons/hicolor/24x24/devices/virt-viewer-usb.png
-/usr/share/icons/hicolor/24x24/devices/virt-viewer-usb.svg
 /usr/share/icons/hicolor/256x256/apps/virt-viewer.png
 /usr/share/icons/hicolor/32x32/apps/virt-viewer.png
 /usr/share/icons/hicolor/48x48/apps/virt-viewer.png
+/usr/share/icons/hicolor/scalable/apps/virt-viewer.svg
+/usr/share/metainfo/remote-viewer.appdata.xml
 /usr/share/mime-packages/virt-viewer-mime.xml
 
 %files license

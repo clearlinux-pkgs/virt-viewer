@@ -1,0 +1,8 @@
+10.0
+bash-completion-dev
+desktop-file-utils
+pkgconfig(bash-completion)
+pkgconfig(rest-0.7)
+pkgconfig(vte-2.91)
+rest-dev
+vte-dev
