@@ -5,11 +5,11 @@
 # Source0 file verified with key 0xBE86EBB415104FDF (dan@berrange.com)
 #
 Name     : virt-viewer
-Version  : 10.0
-Release  : 19
-URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz
-Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz
-Source1  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz.asc
+Version  : 11.0
+Release  : 20
+URL      : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-11.0.tar.xz
+Source0  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-11.0.tar.xz
+Source1  : https://virt-manager.org/download/sources/virt-viewer/virt-viewer-11.0.tar.xz.asc
 Summary  : Virtual Machine Viewer
 Group    : Development/Tools
 License  : GPL-2.0 GPL-2.0+
@@ -80,23 +80,23 @@ man components for the virt-viewer package.
 
 
 %prep
-%setup -q -n virt-viewer-10.0
-cd %{_builddir}/virt-viewer-10.0
+%setup -q -n virt-viewer-11.0
+cd %{_builddir}/virt-viewer-11.0
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1621443996
+export SOURCE_DATE_EPOCH=1637693696
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
 CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" meson --libdir=lib64 --prefix=/usr --buildtype=plain   builddir
 ninja -v -C builddir
 
@@ -105,24 +105,24 @@ export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-meson test -C builddir
+meson test -C builddir --print-errorlogs
 
 %install
 mkdir -p %{buildroot}/usr/share/package-licenses/virt-viewer
-cp %{_builddir}/virt-viewer-10.0/COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
+cp %{_builddir}/virt-viewer-11.0/COPYING %{buildroot}/usr/share/package-licenses/virt-viewer/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
 DESTDIR=%{buildroot} ninja -C builddir install
 %find_lang virt-viewer
 ## Remove excluded files
-rm -f %{buildroot}/usr/share/mime/XMLnamespaces
-rm -f %{buildroot}/usr/share/mime/aliases
-rm -f %{buildroot}/usr/share/mime/generic-icons
-rm -f %{buildroot}/usr/share/mime/globs
-rm -f %{buildroot}/usr/share/mime/globs2
-rm -f %{buildroot}/usr/share/mime/magic
-rm -f %{buildroot}/usr/share/mime/mime.cache
-rm -f %{buildroot}/usr/share/mime/subclasses
-rm -f %{buildroot}/usr/share/mime/treemagic
-rm -f %{buildroot}/usr/share/mime/types
+rm -f %{buildroot}*/usr/share/mime/XMLnamespaces
+rm -f %{buildroot}*/usr/share/mime/aliases
+rm -f %{buildroot}*/usr/share/mime/generic-icons
+rm -f %{buildroot}*/usr/share/mime/globs
+rm -f %{buildroot}*/usr/share/mime/globs2
+rm -f %{buildroot}*/usr/share/mime/magic
+rm -f %{buildroot}*/usr/share/mime/mime.cache
+rm -f %{buildroot}*/usr/share/mime/subclasses
+rm -f %{buildroot}*/usr/share/mime/treemagic
+rm -f %{buildroot}*/usr/share/mime/types
 
 %files
 %defattr(-,root,root,-)
