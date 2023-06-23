@@ -7,7 +7,7 @@
 #
 Name     : virt-viewer
 Version  : 11.0
-Release  : 22
+Release  : 23
 URL      : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz
 Source0  : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz
 Source1  : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz.asc
@@ -34,7 +34,7 @@ BuildRequires : vte-dev
 # Suppress stripping binaries
 %define __strip /bin/true
 %define debug_package %{nil}
-Patch1: rest.diff
+Patch1: rest-version-fix.patch
 
 %description
 Virtual Machine Viewer provides a graphical console client for connecting
@@ -93,7 +93,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1687482700
+export SOURCE_DATE_EPOCH=1687483859
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
