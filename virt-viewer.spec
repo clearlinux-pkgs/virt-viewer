@@ -7,7 +7,7 @@
 #
 Name     : virt-viewer
 Version  : 11.0
-Release  : 21
+Release  : 22
 URL      : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz
 Source0  : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz
 Source1  : https://releases.pagure.org/virt-viewer/virt-viewer-11.0.tar.xz.asc
@@ -26,7 +26,6 @@ BuildRequires : gtk+-dev
 BuildRequires : pkgconfig(bash-completion)
 BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(libvirt-glib-1.0)
-BuildRequires : pkgconfig(rest-0.7)
 BuildRequires : pkgconfig(vte-2.91)
 BuildRequires : rest-dev
 BuildRequires : spice-gtk
@@ -35,6 +34,7 @@ BuildRequires : vte-dev
 # Suppress stripping binaries
 %define __strip /bin/true
 %define debug_package %{nil}
+Patch1: rest.diff
 
 %description
 Virtual Machine Viewer provides a graphical console client for connecting
@@ -86,13 +86,14 @@ man components for the virt-viewer package.
 %prep
 %setup -q -n virt-viewer-11.0
 cd %{_builddir}/virt-viewer-11.0
+%patch -P 1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1687472732
+export SOURCE_DATE_EPOCH=1687482700
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
